@@ -56,12 +56,14 @@ async def healthz():
     Returns HTTP 200 {"status":"ok"} so they know the service is up.
     """
     return {"status": "ok"}
+@app.post("/chat")
 
 async def chat(payload: ChatRequest):
     try:
         messages = [
             {"role": "system", "content": SYSTEM_PROMPT},
             {"role": "user",   "content": payload.message}
+
         ]
         resp = openai.ChatCompletion.create(
     model="gpt-3.5-turbo",
