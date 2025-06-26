@@ -44,7 +44,19 @@ Example lines:
 class ChatRequest(BaseModel):
     message: str
 
-@app.post("/chat")
+# … imports, CORS, SYSTEM_PROMPT, ChatRequest …
+
+
+
+# ← Moved health check here, *after* chat()
+@app.get("/healthz")
+async def healthz():
+    """
+    Health check for Render (or any load-balancer):
+    Returns HTTP 200 {"status":"ok"} so they know the service is up.
+    """
+    return {"status": "ok"}
+
 async def chat(payload: ChatRequest):
     try:
         messages = [
