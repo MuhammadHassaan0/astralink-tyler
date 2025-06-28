@@ -28,41 +28,67 @@ closeModal.onclick = () => {
 }
 
 // PayPal redirect
-payBtn.onclick = () => {
-  window.location.href = 'https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=YOUR_BUTTON_ID'
+let remaining = 3
+const fill = document.querySelector('.progress__fill')
+const micBtn   = document.getElementById('micBtn')
+const sendBtn  = document.getElementById('sendBtn')
+const payBtn   = document.getElementById('payBtn')
+const closeModal = document.getElementById('closeModal')
+const overlay  = document.getElementById('overlay')
+const modal    = document.getElementById('paymentModal')
+const msgs     = document.getElementById('messages')
+const input    = document.getElementById('textInput')
+
+// animate progress
+function updateProgress() {
+  fill.style.transform = `scaleX(${remaining/3})`
 }
+updateProgress()
 
-// Send text question
-sendBtn.onclick = askQuestion
-micBtn.onclick  = askQuestion // for now: same behavior
+// show / hide paywall
+function showPay()  { overlay.classList.remove('hidden'); modal.classList.remove('hidden') }
+function hidePay()  { overlay.classList.add('hidden');    modal.classList.add('hidden') }
 
-async function askQuestion(){
-  if (remaining <= 0) return showPayModal()
-  const msg = input.value.trim()
-  if (!msg) return
-  appendMessage('You', msg)
-  input.value = ''
+// ask question
+async function ask(q) {
+  if (remaining <= 0) return showPay()
+  const divYou = document.createElement('div')
+  divYou.className = 'bubble user'
+  divYou.textContent = q
+  msgs.appendChild(divYou)
+  msgs.scrollTop = msgs.scrollHeight
+
   remaining--
-  refreshProgress()
+  updateProgress()
 
   const res = await fetch('/api/chat', {
     method:'POST',
     headers:{ 'Content-Type':'application/json' },
-    body: JSON.stringify({ message: msg })
+    body: JSON.stringify({ message: q })
   })
   const { reply } = await res.json()
-  appendMessage('Coach Tyler', reply)
+  const divBot = document.createElement('div')
+  divBot.className = 'bubble bot'
+  divBot.textContent = reply
+  msgs.appendChild(divBot)
+  msgs.scrollTop = msgs.scrollHeight
 
-  if (remaining <= 0) showPayModal()
+  if (remaining <= 0) showPay()
 }
 
-function appendMessage(who, text){
-  const div = document.createElement('div')
-  div.className = who === 'You' ? 'user' : 'bot'
-  div.innerText = text
-  msgBox.appendChild(div)
-  msgBox.scrollTop = msgBox.scrollHeight
+// event handlers
+sendBtn.onclick = () => {
+  const text = input.value.trim()
+  if (!text) return
+  input.value = ''
+  ask(text)
 }
-
-refreshProgress()
+micBtn.onclick = () => {
+  // TODO: hook up Web Speech API…
+  alert('🎤 voice not yet live!')
+}
+closeModal.onclick = hidePay
+payBtn.onclick   = () => {
+  location.href = 'https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=YOUR_BTN_ID'
+}
 
