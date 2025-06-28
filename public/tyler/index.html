@@ -1,38 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <title>Chat with Coach Tyler</title>
-  <style>
-    body { font-family: sans-serif; padding: 2rem; max-width: 600px; margin: auto; }
-    textarea { width: 100%; height: 4rem; font-size: 1rem; }
-    button { padding: 0.5rem 1rem; font-size: 1rem; margin-top: 0.5rem; }
-    pre { background: #f4f4f4; padding: 1rem; white-space: pre-wrap; }
-  </style>
+  <meta charset="UTF-8" />
+  <title>Chat with Coach Tyler Wall</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <h1>Chat with Coach Tyler Wall</h1>
-  <textarea id="input" placeholder="Type your question…"></textarea><br/>
-  <button id="send">Send</button>
-  <h2>Response:</h2>
-  <pre id="output">Awaiting your question…</pre>
+  <header>
+    <h1>Coach Tyler Wall</h1>
+    <p><strong><span id="remaining">3</span> free voice sessions</strong> • No signup required</p>
+  </header>
 
-  <script>
-    document.getElementById('send').onclick = async () => {
-      const msg = document.getElementById('input').value;
-      document.getElementById('output').textContent = '…thinking…';
-      try {
-        const res = await fetch('/api/chat', {
-          method: 'POST',
-          headers: { 'Content-Type':'application/json' },
-          body: JSON.stringify({ message: msg })
-        });
-        const { reply } = await res.json();
-        document.getElementById('output').textContent = reply;
-      } catch (err) {
-        document.getElementById('output').textContent = 'Error: ' + err;
-      }
-    };
-  </script>
+  <main>
+    <div id="progress">
+      <span class="dot filled"></span>
+      <span class="dot filled"></span>
+      <span class="dot filled"></span>
+    </div>
+
+    <div id="chat">
+      <div id="messages">
+        <div class="bot">Awaiting your question…</div>
+      </div>
+      <textarea id="textInput" placeholder="Or type your question…"></textarea>
+    </div>
+
+    <button id="micBtn" class="mic">🎤 Speak</button>
+    <button id="sendBtn" class="send">✉️ Send</button>
+  </main>
+
+  <!-- Payment Modal -->
+  <div id="overlay" class="hidden"></div>
+  <div id="paymentModal" class="modal hidden">
+    <h2>Unlock Coach Tyler</h2>
+    <p>Pay <strong>$3</strong> to continue chatting + <em>optional</em> $2 tip</p>
+    <button id="payBtn">Pay $5</button>
+    <button id="closeModal">Later</button>
+  </div>
+
+  <script src="app.js"></script>
 </body>
 </html>
+
