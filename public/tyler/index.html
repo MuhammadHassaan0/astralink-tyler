@@ -4,42 +4,99 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Coach Tyler Wall</title>
-  <link rel="stylesheet" href="styles.css" />
+  <!-- Tailwind + Container Queries -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin />
+  <link
+    rel="stylesheet"
+    as="style"
+    onload="this.rel='stylesheet'"
+    href="https://fonts.googleapis.com/css2?display=swap&amp;family=Manrope:wght@400;500;700;800&amp;family=Noto+Sans:wght@400;500;700;900"
+  />
+  <style>
+    body { font-family: 'Manrope','Noto Sans',sans-serif; }
+  </style>
 </head>
-<body>
-  <div class="container">
-    <header class="hero">
-      <h1 class="hero__title">Chat with Coach Tyler Wall</h1>
-      <p class="hero__subtitle">3 free voice boosts • No sign-up</p>
+<body class="bg-[#fcfaf8]">
+
+  <!-- Chat Screen -->
+  <div id="chat-screen" class="min-h-screen flex flex-col justify-between">
+    <header class="py-8 text-center">
+      <h1 class="text-4xl font-extrabold">One Last Conversation with Coach Tyler</h1>
+      <p class="mt-2 text-lg text-[#e0c7ad]">Speak to him. Hear his wisdom. Feel his presence again.</p>
     </header>
 
-    <section class="chat-card">
-      <div id="messages" class="chat-card__messages">
-        <div class="bubble bot">Awaiting your question…</div>
+    <main class="flex-1 flex items-center justify-center">
+      <div
+        class="w-full max-w-2xl p-4 @[480px]:rounded-xl @[480px]:bg-cover @[480px]:bg-center @[480px]:bg-no-repeat"
+        style='background-image:
+          linear-gradient(rgba(0,0,0,0.1),rgba(0,0,0,0.4)),
+          url("/tyler/images/tyler.png");'
+      >
+        <div class="bg-white/80 p-6 rounded-xl space-y-4">
+          <div class="flex items-center justify-center mb-4">
+            <span class="text-sm font-medium">3 free voice boosts</span>
+          </div>
+          <div class="flex gap-2">
+            <input
+              id="textInput"
+              type="text"
+              placeholder="Ask Tyler anything..."
+              class="flex-1 rounded-l-xl border border-[#e8dace] px-4 py-3 focus:outline-none"
+            />
+            <button
+              id="sendBtn"
+              class="bg-[#ee6d0b] text-white rounded-r-xl px-6 font-bold hover:opacity-90 transition"
+            >
+              Send &amp; Hear Reply
+            </button>
+          </div>
+          <div id="messageLog" class="mt-6 space-y-2"></div>
+        </div>
       </div>
+    </main>
 
-      <div class="chat-card__controls">
-        <button id="micBtn" class="btn btn--voice">🎤 Speak</button>
-        <textarea id="textInput" class="input input--chat" placeholder="Or type your question…"></textarea>
-        <button id="sendBtn" class="btn btn--send">✉️ Send</button>
-      </div>
-
-      <div id="progressBar" class="progress">
-        <div class="progress__fill"></div>
-      </div>
-    </section>
+    <footer class="py-6 text-center text-sm text-[#9c6d49]">
+      <a href="#" class="mx-4 hover:underline">Terms</a>
+      <a href="#" class="mx-4 hover:underline">Privacy</a>
+      <p class="mt-2">© Chat with Coach Tyler. Built with love.</p>
+    </footer>
   </div>
 
-  <!-- Paywall Overlay -->
-  <div id="overlay" class="overlay hidden"></div>
-  <div id="paymentModal" class="modal hidden">
-    <h2>Keep the Energy Going</h2>
-    <p>Unlock unlimited coaching for <strong>$3</strong> + optional <em>$2 tip</em></p>
-    <button id="payBtn" class="btn btn--primary">Pay with PayPal →</button>
-    <button id="closeModal" class="btn btn--link">Maybe Later</button>
+  <!-- Waitlist Modal (shown after 3 chats) -->
+  <div
+    id="waitlist-screen"
+    class="fixed inset-0 bg-black/50 hidden items-center justify-center"
+  >
+    <div class="bg-[#fcfaf8] p-8 rounded-xl max-w-md w-full">
+      <h1 class="text-2xl font-bold text-center text-[#1c130d] mb-4">
+        Join the Waitlist to Keep Talking to Coach Tyler
+      </h1>
+      <p class="text-center text-[#1c130d] mb-6">
+        You’ve used your 3 free chats.<br>
+        We’re opening access to more users soon. Enter your email below to be notified first.
+      </p>
+      <div class="flex gap-2 mb-4">
+        <input
+          id="emailInput"
+          type="email"
+          placeholder="Enter your email"
+          class="flex-1 rounded-xl border-none bg-[#f4ece7] px-4 py-3 placeholder-[#9c6d49] focus:outline-none"
+        />
+        <button
+          id="joinBtn"
+          class="bg-[#ee6d0b] text-white rounded-xl px-6 font-bold hover:opacity-90 transition"
+        >
+          Join Waitlist
+        </button>
+      </div>
+      <p class="text-center text-[#9c6d49] text-sm">
+        We’ll let you know as soon as unlimited access opens.
+      </p>
+    </div>
   </div>
 
-  <script src="app.js"></script>
+  <script src="/tyler/app.js"></script>
 </body>
 </html>
 
