@@ -27,7 +27,6 @@
     </header>
 
     <main class="flex-1 flex items-center justify-center">
-      <!-- Hero container with forced BG -->
       <div
         class="w-full max-w-2xl p-4 rounded-xl bg-cover bg-center"
         style="
@@ -68,7 +67,7 @@
     </footer>
   </div>
 
-  <!-- Waitlist Modal -->
+  <!-- Waitlist Modal (shown after 3 chats) -->
   <div
     id="waitlist-screen"
     class="fixed inset-0 bg-black/50 hidden items-center justify-center"
@@ -81,27 +80,33 @@
         You’ve used your 3 free chats.<br>
         We’re opening access to more users soon. Enter your email below to be notified first.
       </p>
-      <div class="flex gap-2 mb-4">
+
+      <form
+        action="https://formspree.io/f/xwpbydae"
+        method="POST"
+        class="flex gap-2 mb-4"
+      >
         <input
-          id="emailInput"
+          name="email"
           type="email"
           placeholder="Enter your email"
+          required
           class="flex-1 rounded-xl border-none bg-[#f4ece7] px-4 py-3 placeholder-[#9c6d49] focus:outline-none"
         />
         <button
-          id="joinBtn"
+          type="submit"
           class="bg-[#ee6d0b] text-white rounded-xl px-6 font-bold hover:opacity-90 transition"
         >
           Join Waitlist
         </button>
-      </div>
+      </form>
+
       <p class="text-center text-[#9c6d49] text-sm">
         We’ll let you know as soon as unlimited access opens.
       </p>
     </div>
   </div>
 
-  <!-- **THIS** must point to /tyler/app.js -->
   <script src="/tyler/app.js"></script>
 </body>
 </html>
