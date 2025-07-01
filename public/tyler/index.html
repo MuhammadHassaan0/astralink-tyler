@@ -27,7 +27,7 @@
     </header>
 
     <main class="flex-1 flex items-center justify-center">
-      <!-- HERO WITH ALWAYS-ON BACKGROUND -->
+      <!-- Hero container with forced BG -->
       <div
         class="w-full max-w-2xl p-4 rounded-xl bg-cover bg-center"
         style="
@@ -68,7 +68,7 @@
     </footer>
   </div>
 
-  <!-- Waitlist Modal (shown after 3 chats) -->
+  <!-- Waitlist Modal -->
   <div
     id="waitlist-screen"
     class="fixed inset-0 bg-black/50 hidden items-center justify-center"
@@ -79,8 +79,7 @@
       </h1>
       <p class="text-center text-[#1c130d] mb-6">
         You’ve used your 3 free chats.<br>
-        We’re opening access to more users soon.<br>
-        Enter your email below to be notified first.
+        We’re opening access to more users soon. Enter your email below to be notified first.
       </p>
       <div class="flex gap-2 mb-4">
         <input
@@ -102,6 +101,7 @@
     </div>
   </div>
 
+  <!-- **THIS** must point to /tyler/app.js -->
   <script src="/tyler/app.js"></script>
 </body>
 </html>

@@ -1,94 +1,51 @@
-let remaining = 3
-const dots = document.querySelectorAll('.dot')
-const micBtn = document.getElementById('micBtn')
-const sendBtn = document.getElementById('sendBtn')
-const payBtn = document.getElementById('payBtn')
-const closeModal = document.getElementById('closeModal')
-const overlay = document.getElementById('overlay')
-const modal = document.getElementById('paymentModal')
-const msgBox = document.getElementById('messages')
-const input = document.getElementById('textInput')
+(() => {
+  let usesLeft = 3;
+  const textInput   = document.getElementById('textInput');
+  const sendBtn     = document.getElementById('sendBtn');
+  const log         = document.getElementById('messageLog');
+  const waitlistScr = document.getElementById('waitlist-screen');
+  const emailInput  = document.getElementById('emailInput');
+  const joinBtn     = document.getElementById('joinBtn');
 
-// Update UI dots
-function refreshProgress(){
-  dots.forEach((d,i)=> d.classList.toggle('filled', i < remaining))
-  document.getElementById('remaining').innerText = remaining
-}
+  sendBtn.addEventListener('click', async () => {
+    const msg = textInput.value.trim();
+    if (!msg) return;
 
-// Show payment modal
-function showPayModal(){
-  overlay.classList.remove('hidden')
-  modal.classList.remove('hidden')
-}
+    // show user message
+    const u = document.createElement('div');
+    u.textContent = msg;
+    u.className   = 'text-right text-[#181410]';
+    log.append(u);
 
-// Hide payment modal
-closeModal.onclick = () => {
-  overlay.classList.add('hidden')
-  modal.classList.add('hidden')
-}
+    if (usesLeft <= 0) {
+      // lock out and show waitlist
+      waitlistScr.classList.remove('hidden');
+      return;
+    }
+    usesLeft--;
 
-// PayPal redirect
-let remaining = 3
-const fill = document.querySelector('.progress__fill')
-const micBtn   = document.getElementById('micBtn')
-const sendBtn  = document.getElementById('sendBtn')
-const payBtn   = document.getElementById('payBtn')
-const closeModal = document.getElementById('closeModal')
-const overlay  = document.getElementById('overlay')
-const modal    = document.getElementById('paymentModal')
-const msgs     = document.getElementById('messages')
-const input    = document.getElementById('textInput')
+    // call your Vercel chat endpoint
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({message: msg})
+    });
+    const {reply} = await res.json();
 
-// animate progress
-function updateProgress() {
-  fill.style.transform = `scaleX(${remaining/3})`
-}
-updateProgress()
+    const b = document.createElement('div');
+    b.textContent = reply;
+    b.className   = 'text-left text-[#181410]';
+    log.append(b);
 
-// show / hide paywall
-function showPay()  { overlay.classList.remove('hidden'); modal.classList.remove('hidden') }
-function hidePay()  { overlay.classList.add('hidden');    modal.classList.add('hidden') }
+    textInput.value = '';
+  });
 
-// ask question
-async function ask(q) {
-  if (remaining <= 0) return showPay()
-  const divYou = document.createElement('div')
-  divYou.className = 'bubble user'
-  divYou.textContent = q
-  msgs.appendChild(divYou)
-  msgs.scrollTop = msgs.scrollHeight
-
-  remaining--
-  updateProgress()
-
-  const res = await fetch('/api/chat', {
-    method:'POST',
-    headers:{ 'Content-Type':'application/json' },
-    body: JSON.stringify({ message: q })
-  })
-  const { reply } = await res.json()
-  const divBot = document.createElement('div')
-  divBot.className = 'bubble bot'
-  divBot.textContent = reply
-  msgs.appendChild(divBot)
-  msgs.scrollTop = msgs.scrollHeight
-
-  if (remaining <= 0) showPay()
-}
-
-// event handlers
-sendBtn.onclick = () => {
-  const text = input.value.trim()
-  if (!text) return
-  input.value = ''
-  ask(text)
-}
-micBtn.onclick = () => {
-  // TODO: hook up Web Speech API…
-  alert('🎤 voice not yet live!')
-}
-closeModal.onclick = hidePay
-payBtn.onclick   = () => {
-  location.href = 'https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=YOUR_BTN_ID'
-}
+  joinBtn.addEventListener('click', () => {
+    const email = emailInput.value.trim();
+    if (!email) return alert('Please enter your email.');
+    // TODO: wire this up to your backend / Zapier / Google Sheet
+    alert(`Thanks! You’ll be notified at ${email}`);
+    waitlistScr.classList.add('hidden');
+  });
+})();
 
