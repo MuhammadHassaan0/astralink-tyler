@@ -8,30 +8,32 @@
   const emailInput  = document.getElementById('emailInput');
   const joinBtn     = document.getElementById('joinBtn');
 
-  // Send / Chat
-  sendBtn.addEventListener('click', async () => {
+  // Core send/chat flow
+  async function handleSend() {
     const msg = textInput.value.trim();
     if (!msg) return;
 
-    // 1) show user
+    // 1) Append user message
     const u = document.createElement('div');
     u.textContent = msg;
     u.className   = 'text-right text-[#181410]';
     log.append(u);
 
-    // 2) out of freebies?
+    // 2) Free-use guard
     usesLeft--;
     if (usesLeft < 0) {
       waitlistScr.classList.remove('hidden');
       return;
     }
 
-    // 3) show thinking
+    // 3) Disable UI + show spinner
+    sendBtn.disabled = true;
+    textInput.disabled = true;
     thinking.classList.remove('hidden');
 
-    // 4) call API
     let payload;
     try {
+      // 4) Call backend
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: {'Content-Type':'application/json'},
@@ -41,37 +43,48 @@
       payload = await res.json();
     } catch (err) {
       console.error('API Error:', err);
+      // hide spinner and re-enable
       thinking.classList.add('hidden');
+      sendBtn.disabled = false;
+      textInput.disabled = false;
       return;
     }
 
-    const {reply, audio} = payload;
-
-    // 5) hide thinking
+    // 5) Hide spinner
     thinking.classList.add('hidden');
 
-    // 6) show Tyler’s reply
+    const {reply, audio} = payload;
+
+    // 6) Append Tyler’s reply
     const b = document.createElement('div');
     b.textContent = reply;
     b.className   = 'text-left text-[#181410]';
     log.append(b);
 
-    // 7) play voice if present
-    if (audio) new Audio(audio).play().catch(console.warn);
+    // 7) Play voice if available
+    if (audio) {
+      const player = new Audio(audio);
+      player.play().catch(console.warn);
+    }
 
+    // 8) Re-enable UI + clear input
+    sendBtn.disabled = false;
+    textInput.disabled = false;
     textInput.value = '';
-  });
+    textInput.focus();
+  }
 
-  // Enter key triggers send
+  // Bind handlers once
+  sendBtn.addEventListener('click', handleSend);
   textInput.addEventListener('keyup', e => {
-    if (e.key === 'Enter') sendBtn.click();
+    if (e.key === 'Enter') handleSend();
   });
 
-  // Waitlist join
+  // Waitlist / join logic stays as before
   joinBtn.addEventListener('click', () => {
     const email = emailInput.value.trim();
     if (!email) return alert('Please enter your email.');
-    // TODO: POST to your /api/waitlist or Formspree endpoint
+    // → TODO: POST to your Formspree or backend endpoint
     alert(`Thanks! You’ll be notified at ${email}`);
     waitlistScr.classList.add('hidden');
   });
