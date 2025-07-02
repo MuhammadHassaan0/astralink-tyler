@@ -86,32 +86,44 @@
       <h1 class="text-2xl font-bold text-center text-[#1c130d] mb-4">
         Join the Waitlist to Keep Talking to Coach Tyler
       </h1>
-      <p class="text-center text-[#1c130d] mb-6">
-        You’ve used your 3 free chats.<br />
-        Enter your email below to be notified first.
+      <p class="text-center text-[#1c130d] mb-2">
+        You’ve used your 3 free chats. Enter your email below to be notified first.
+      </p>
+      <p class="text-center text-[#9c6d49] mb-4">
+        Get unlimited chats &amp; voice replies — and be <strong>first</strong> to try our “Forever Voices” keepsake.
       </p>
       <form
         action="https://formspree.io/f/xwpbydae"
         method="POST"
-        class="flex gap-2 mb-4"
+        class="space-y-4"
       >
-        <input
-          id="emailInput"
-          name="email"
-          type="email"
-          placeholder="Enter your email"
-          class="flex-1 rounded-xl border-none bg-[#f4ece7] px-4 py-3 placeholder-[#9c6d49] focus:outline-none"
-          required
-        />
-        <button
-          type="submit"
-          id="joinBtn"
-          class="bg-[#ee6d0b] text-white rounded-xl px-6 font-bold hover:opacity-90 transition"
-        >
-          Join Waitlist
-        </button>
+        <div class="flex gap-2">
+          <input
+            id="emailInput"
+            name="email"
+            type="email"
+            placeholder="Enter your email"
+            class="flex-1 rounded-xl border-none bg-[#f4ece7] px-4 py-3 placeholder-[#9c6d49] focus:outline-none"
+            required
+          />
+          <button
+            type="submit"
+            id="joinBtn"
+            class="bg-[#ee6d0b] text-white rounded-xl px-6 font-bold hover:opacity-90 transition"
+          >
+            Join Waitlist
+          </button>
+        </div>
+        <label class="inline-flex items-center gap-2">
+          <input
+            type="checkbox"
+            name="early_access"
+            class="rounded border-gray-300 text-[#ee6d0b] focus:ring-0"
+          />
+          <span class="text-[#1c130d]">Early access to the “Forever Voices” audio &amp; video feature</span>
+        </label>
       </form>
-      <p class="text-center text-[#9c6d49] text-sm">
+      <p class="text-center text-[#9c6d49] text-sm mt-2">
         We’ll let you know as soon as unlimited access opens.
       </p>    
     </div>
