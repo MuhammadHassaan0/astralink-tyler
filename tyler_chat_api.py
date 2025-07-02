@@ -1,27 +1,31 @@
-simport os
+import os
+import base64
+import httpx
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import openai
-
 from fastapi.middleware.cors import CORSMiddleware
 
-# Load your OpenAI API key from the environment
+# ─── Load your keys from env vars ─────────────────────────────────────────────
 openai.api_key = os.getenv("OPENAI_API_KEY")
-if not openai.api_key:
-    raise RuntimeError("Please set OPENAI_API_KEY as an env var.")
+ELEVEN_API_KEY = os.getenv("ELEVEN_API_KEY")
+VOICE_ID       = os.getenv("ELEVEN_VOICE_ID")
 
+if not openai.api_key or not ELEVEN_API_KEY or not VOICE_ID:
+    raise RuntimeError(
+        "Please set OPENAI_API_KEY, ELEVEN_API_KEY & ELEVEN_VOICE_ID env vars"
+    )
+
+# ─── App setup ─────────────────────────────────────────────────────────────────
 app = FastAPI()
-
-
-# ─── ENABLE CORS ────────────────────────────────────────────
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://astralink.life"],   # ← your front-end origin
-    allow_methods=["POST", "OPTIONS"],          # only these HTTP verbs
-    allow_headers=["*"],                        # allow all headers
+    allow_origins=["https://astralink.life"],  # your front‐end origin
+    allow_methods=["POST", "OPTIONS"],
+    allow_headers=["*"],
 )
-# ────────────────────────────────────────────────────────────
 
+# ─── Tyler’s system prompt ────────────────────────────────────────────────────
 SYSTEM_PROMPT = """
 You are Coach Tyler Wall: a tough-but-empathetic trainer and deep thinker.
 Answer every user question in Tyler’s voice—short, encouraging bursts, drawn from the spirit and tone of the example lines below.
@@ -51,34 +55,61 @@ Coaching Context (only use when user asks about Majd or MrBeast’s crew):
 class ChatRequest(BaseModel):
     message: str
 
-# … imports, CORS, SYSTEM_PROMPT, ChatRequest …
+# ─── ElevenLabs TTS helper ────────────────────────────────────────────────────
+async def text_to_speech(text: str) -> str:
+    """
+    Calls Eleven Labs TTS API and returns a base64‐encoded MP3 data URI.
+    """
+    url = f"https://api.elevenlabs.io/v1/text-to-speech/{VOICE_ID}"
+    headers = {
+        "xi-api-key": ELEVEN_API_KEY,
+        "Content-Type": "application/json"
+    }
+    payload = {
+        "text": text,
+        "voice_settings": {"stability": 0.5, "similarity_boost": 0.75}
+    }
+    async with httpx.AsyncClient(timeout=30.0) as client:
+        resp = await client.post(url, json=payload, headers=headers)
+        resp.raise_for_status()
+        mp3_bytes = resp.content
 
+    b64 = base64.b64encode(mp3_bytes).decode()
+    return f"data:audio/mpeg;base64,{b64}"
 
+# ─── Chat endpoint ───────────────────────────────────────────────────────────
+@app.post("/chat")
+async def chat(payload: ChatRequest):
+    # 1) Generate Tyler-style reply
+    try:
+        gpt_resp = await openai.ChatCompletion.acreate(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": SYSTEM_PROMPT},
+                {"role": "user",   "content": payload.message}
+            ],
+            temperature=0.7,
+            max_tokens=150,
+        )
+        reply = gpt_resp.choices[0].message.content.strip()
+    except Exception as e:
+        raise HTTPException(500, f"OpenAI error: {e}")
 
-# ← Moved health check here, *after* chat()
+    # 2) Synthesize voice
+    audio_uri = None
+    try:
+        audio_uri = await text_to_speech(reply)
+    except Exception:
+        # fallback to text‐only if TTS fails
+        audio_uri = None
+
+    return {"reply": reply, "audio": audio_uri}
+
+# ─── Health check ─────────────────────────────────────────────────────────────
 @app.get("/healthz")
 async def healthz():
     """
-    Health check for Render (or any load-balancer):
-    Returns HTTP 200 {"status":"ok"} so they know the service is up.
+    For load-balancers or uptime checks.
     """
     return {"status": "ok"}
-@app.post("/chat")
 
-async def chat(payload: ChatRequest):
-    try:
-        messages = [
-            {"role": "system", "content": SYSTEM_PROMPT},
-            {"role": "user",   "content": payload.message}
-
-        ]
-        resp = openai.ChatCompletion.create(
-    model="gpt-3.5-turbo",
-    messages=messages,
-    temperature=0.7,
-    max_tokens=150,
-)
-
-        return {"reply": resp.choices[0].message.content.strip()}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
