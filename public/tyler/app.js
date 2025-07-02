@@ -5,8 +5,6 @@
   const log         = document.getElementById('messageLog');
   const waitlistScr = document.getElementById('waitlist-screen');
   const thinking    = document.getElementById('thinking');
-  const emailInput  = document.getElementById('emailInput');
-  const joinBtn     = document.getElementById('joinBtn');
 
   // Core send/chat flow
   async function handleSend() {
@@ -27,8 +25,8 @@
     }
 
     // 3) Disable UI + show spinner
-    sendBtn.disabled = true;
-    textInput.disabled = true;
+    sendBtn.disabled     = true;
+    textInput.disabled   = true;
     thinking.classList.remove('hidden');
 
     let payload;
@@ -42,10 +40,9 @@
       if (!res.ok) throw new Error(await res.text());
       payload = await res.json();
     } catch (err) {
-      console.error('API Error:', err);
-      // hide spinner and re-enable
+      console.error('Chat API error:', err);
       thinking.classList.add('hidden');
-      sendBtn.disabled = false;
+      sendBtn.disabled   = false;
       textInput.disabled = false;
       return;
     }
@@ -53,9 +50,8 @@
     // 5) Hide spinner
     thinking.classList.add('hidden');
 
-    const {reply, audio} = payload;
-
     // 6) Append Tyler’s reply
+    const {reply, audio} = payload;
     const b = document.createElement('div');
     b.textContent = reply;
     b.className   = 'text-left text-[#181410]';
@@ -68,25 +64,16 @@
     }
 
     // 8) Re-enable UI + clear input
-    sendBtn.disabled = false;
-    textInput.disabled = false;
-    textInput.value = '';
+    sendBtn.disabled     = false;
+    textInput.disabled   = false;
+    textInput.value      = '';
     textInput.focus();
   }
 
-  // Bind handlers once
+  // Bind send
   sendBtn.addEventListener('click', handleSend);
   textInput.addEventListener('keyup', e => {
     if (e.key === 'Enter') handleSend();
-  });
-
-  // Waitlist / join logic stays as before
-  joinBtn.addEventListener('click', () => {
-    const email = emailInput.value.trim();
-    if (!email) return alert('Please enter your email.');
-    // → TODO: POST to your Formspree or backend endpoint
-    alert(`Thanks! You’ll be notified at ${email}`);
-    waitlistScr.classList.add('hidden');
   });
 })();
 
