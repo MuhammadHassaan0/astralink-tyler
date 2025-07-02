@@ -23,9 +23,7 @@
   <div id="chat-screen" class="min-h-screen flex flex-col justify-between">
     <header class="py-8 text-center">
       <h1 class="text-4xl font-extrabold">One Last Conversation with Coach Tyler</h1>
-      <p class="mt-2 text-lg text-[#e0c7ad]">
-        Speak to him. Hear his wisdom. Feel his presence again.
-      </p>
+      <p class="mt-2 text-lg text-[#e0c7ad]">Speak to him. Hear his wisdom. Feel his presence again.</p>
     </header>
 
     <main class="flex-1 flex items-center justify-center">
@@ -38,9 +36,7 @@
         "
       >
         <div class="bg-white/80 p-6 rounded-xl space-y-4">
-          <div class="flex items-center justify-center mb-4">
-            <span class="text-sm font-medium">3 free voice boosts</span>
-          </div>
+          <!-- (removed the "3 free voice boosts" line here) -->
 
           <!-- input + button -->
           <div class="flex gap-2 items-center">
@@ -68,7 +64,7 @@
             <span class="w-3 h-3 bg-[#ee6d0b] rounded-full animate-pulse delay-400"></span>
             <span class="ml-2 text-sm italic text-[#181410]">Tyler is thinking…</span>
           </div>
-          
+
           <!-- message log -->
           <div id="messageLog" class="mt-6 space-y-2"></div>
         </div>
@@ -85,30 +81,35 @@
   <!-- Waitlist Modal (shown after 3 chats) -->
   <div
     id="waitlist-screen"
-    class="fixed inset-0 bg-black/50 hidden items-center justify-center"
+    class="fixed inset-0 bg-black/50 hidden items-center justify-center px-4"
   >
-    <div class="bg-[#fcfaf8] p-8 rounded-xl max-w-md w-full">
-      <h1 class="text-2xl font-bold text-center text-[#1c130d] mb-4">
+    <form
+      action="https://formspree.io/f/xwpbydae"
+      method="POST"
+      class="bg-[#fcfaf8] p-8 rounded-xl max-w-md w-full space-y-4"
+    >
+      <h1 class="text-2xl font-bold text-center text-[#1c130d]">
         Join the Waitlist to Keep Talking to Coach Tyler
       </h1>
-      <p class="text-center text-[#1c130d] mb-6">
+      <p class="text-center text-[#1c130d]">
         You’ve used your 3 free chats.<br />
-        We’re opening access to more users soon. Enter your email below to be notified first.
+        Enter your email below to be notified first.
       </p>
 
-      <!-- Formspree form -->
-      <form
-        id="waitlist-form"
-        action="https://formspree.io/f/xwpbydae"
-        method="POST"
-        class="flex gap-2 mb-4"
-      >
+      <!-- teaser line -->
+      <p class="text-center text-sm text-[#9c6d49]">
+        Get unlimited chats & voice replies—and&nbsp;
+        <strong>be first to try our “Forever Voices” keepsake</strong>.
+      </p>
+
+      <!-- email + submit -->
+      <div class="flex gap-2">
         <input
-          name="email"
           type="email"
+          name="email"
           placeholder="Enter your email"
-          required
           class="flex-1 rounded-xl border-none bg-[#f4ece7] px-4 py-3 placeholder-[#9c6d49] focus:outline-none"
+          required
         />
         <button
           type="submit"
@@ -116,12 +117,25 @@
         >
           Join Waitlist
         </button>
-      </form>
+      </div>
+
+      <!-- checkbox -->
+      <label class="flex items-center gap-2">
+        <input
+          type="checkbox"
+          name="features[]"
+          value="forever-voices"
+          class="h-4 w-4 text-[#ee6d0b] focus:ring-0"
+        />
+        <span class="text-[#1c130d] text-sm">
+          Early access to the “Forever Voices” audio & video feature
+        </span>
+      </label>
 
       <p class="text-center text-[#9c6d49] text-sm">
         We’ll let you know as soon as unlimited access opens.
-      </p>    
-    </div>
+      </p>
+    </form>
   </div>
     
   <script src="/tyler/app.js"></script>
