@@ -36,9 +36,6 @@
         "
       >
         <div class="bg-white/80 p-6 rounded-xl space-y-4">
-          <div class="flex items-center justify-center mb-4">
-            <span class="text-sm font-medium">3 free voice boosts</span>
-          </div>
 
           <!-- input + button -->
           <div class="flex gap-2 items-center">
@@ -48,10 +45,9 @@
               placeholder="Ask Tyler anything..."
               class="flex-1 rounded-l-xl border border-[#e8dace] px-4 py-3 focus:outline-none"
             />
-            <!-- restyled button -->
             <button
               id="sendBtn"
-              class="bg-[#ee6d0b] text-white rounded-md px-4 py-2 font-bold hover:opacity-90 transition"
+              class="bg-[#ee6d0b] text-white rounded-r-xl px-6 font-bold hover:opacity-90 transition"
             >
               Send &amp; Hear Reply
             </button>
@@ -92,22 +88,29 @@
       </h1>
       <p class="text-center text-[#1c130d] mb-6">
         You’ve used your 3 free chats.<br />
-        We’re opening access to more users soon. Enter your email below to be notified first.
+        Enter your email below to be notified first.
       </p>
-      <div class="flex gap-2 mb-4">
+      <form
+        action="https://formspree.io/f/xwpbydae"
+        method="POST"
+        class="flex gap-2 mb-4"
+      >
         <input
           id="emailInput"
+          name="email"
           type="email"
           placeholder="Enter your email"
           class="flex-1 rounded-xl border-none bg-[#f4ece7] px-4 py-3 placeholder-[#9c6d49] focus:outline-none"
+          required
         />
         <button
+          type="submit"
           id="joinBtn"
           class="bg-[#ee6d0b] text-white rounded-xl px-6 font-bold hover:opacity-90 transition"
         >
           Join Waitlist
         </button>
-      </div>
+      </form>
       <p class="text-center text-[#9c6d49] text-sm">
         We’ll let you know as soon as unlimited access opens.
       </p>    
